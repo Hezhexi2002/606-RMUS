@@ -1,6 +1,7 @@
 #!/bin/bash
 SERVER_IMAGE=${SERVER_IMAGE:-tb5zhh/icra-2023-server:latest}
-CLIENT_IMAGE=${CLIENT_IMAGE:-tb5zhh/icra-2023-client:latest}
+CLIENT_IMAGE=${CLIENT_IMAGE:-docker.discover-lab.com:55555/matrix/client:sim-v1.0}
+#CLIENT_IMAGE=${CLIENT_IMAGE:-tb5zhh/icra-2023-client:latest}
 CLI_EXE=$@
 
 xhost +

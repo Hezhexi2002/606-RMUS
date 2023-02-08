@@ -14,7 +14,7 @@ import tf2_geometry_msgs
 
 
 class manipulater:
-    def __init__(self) -> None:
+    def __init__(self) -> None: #矿石抓取类初始化
         self.arm_gripper_pub = rospy.Publisher("arm_gripper", Point, queue_size=2)
         self.arm_position_pub = rospy.Publisher("arm_position", Pose, queue_size=2)
         self.cmd_vel_puber = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
@@ -32,11 +32,24 @@ class manipulater:
         )
 
     def markerPoseCb(self, msg):
+        """收集当前marker的姿态信息
+        
+        Args:
+            msg : 当前marker的姿态信息
+        """
         self.current_marker_poses = msg
         self.image_time_now = rospy.get_time()
         self.observation = [msg.position.x, msg.position.z]
 
     def getTargetPosAndAngleInBaseLinkFrame(self, pose_in_cam):
+        """在base-link下得到目标矿石的位置以及角度
+
+        Args:
+            pose_in_cam : 目标在相机坐标系下的姿态
+
+        Returns:
+            _type_: _description_
+        """
         if not self.tfBuffer.can_transform(
             "base_link", "camera_aligned_depth_to_color_frame_correct", rospy.Time.now()
         ):

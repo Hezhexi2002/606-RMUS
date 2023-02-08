@@ -7,10 +7,13 @@ import copy
 import rospy
 import numpy as np
 
-templates = []
 
+templates = []  #存储template的list
 
 def map_img77(img):
+    """
+    
+    """
     segment = [
         6,
         14,
@@ -29,8 +32,16 @@ def map_img77(img):
     )
     return (all_subs > 0.5).astype(np.uint8) * 255
 
-
 def load_template():
+    """
+    加载模板图片,将template下的图片存入前面的template []中去
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     global templates
     tpl_path = os.path.join(os.path.dirname(__file__), "template/")
     rospy.loginfo(tpl_path)
@@ -42,7 +53,15 @@ def load_template():
 
 
 def sort_contour(cnt):
+    """
+    对得到的轮廓进行排序
 
+    Agrs:
+        cnt:
+
+    Returns:
+
+    """
     if not len(cnt) == 4:
         assert False
     new_cnt = cnt.copy()
@@ -83,6 +102,9 @@ def sort_contour(cnt):
 
 
 def preprocessing_exchange(frame):
+    """
+    兑换矿石时的预处理,参数含义以及返回值同preprocessing,只是分离boolImg时的阈值不同
+    """
     hsvImg = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     boolImg = (
         np.logical_and(
@@ -99,6 +121,17 @@ def preprocessing_exchange(frame):
 
 
 def preprocessing(frame):
+    """
+    对传入的每一帧进行预处理,得到相应的boolImg以及hsvImg
+
+    Args:
+        frame:传入的每一帧
+
+    Returns:
+        boolImg:取得hsvImg中(((h<=10 or h>=150) and s>=60) and v>=50)的部分
+        hsvImg:BGR2HSV
+
+    """
     hsvImg = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     boolImg = (
         np.logical_and(
@@ -115,6 +148,15 @@ def preprocessing(frame):
 
 
 def square_detection(grayImg, camera_matrix, area_filter_size=30, height_range=(-10000.0, 200000.0)):
+    """
+    对灰度图进行处理,提取其中的矿石轮廓
+
+    Args:
+        grayImg:传入的灰度图
+        camera_matrix:相机内参矩阵
+        area_filter_size:
+        height_range:
+    """
     projection_points = True
     quads = []
     quads_f = []
@@ -155,7 +197,7 @@ def square_detection(grayImg, camera_matrix, area_filter_size=30, height_range=(
     for contour in contours:
         area = cv2.contourArea(contour)
         if area >= area_filter_size:
-            approx = cv2.approxPolyDP(contour, filter_len, True)
+            approx = cv2.approxPolyDP(contour, filter_len, True)  #根据area_filter_size确定不同filter_len拟合轮廓
             if len(approx) == 4:
                 approx_sort = sort_contour(approx)
                 if approx_sort is not None:
@@ -231,6 +273,14 @@ def square_detection(grayImg, camera_matrix, area_filter_size=30, height_range=(
 
 
 def classification(frame, quads, template_ids=range(1, 9)):
+    """
+    识别矿石标签
+
+    Args:
+        frame:
+        quads:
+        template_ids:标签id,范围从1到9
+    """
     quads_ID = []
     minpoints_list = []
     wrapped_img_list = []
