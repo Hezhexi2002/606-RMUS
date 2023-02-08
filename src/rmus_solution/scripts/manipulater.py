@@ -80,7 +80,12 @@ class manipulater:
 
         return pos, angle
 
-    def sendBaseVel(self, vel):
+    def sendBaseVel(self, vel): 
+        """某个函数
+
+        Args:
+            vel (_type_): _description_
+        """
         twist = Twist()
         twist.linear.z = 0.0
         twist.linear.x = vel[0]
