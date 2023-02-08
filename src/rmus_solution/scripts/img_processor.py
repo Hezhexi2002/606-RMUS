@@ -81,6 +81,13 @@ class Processor:
         self.uint32data = [None] * 8
 
     def imageCallback(self, image):
+        """图像处理回调函数
+        
+        
+
+        Args:
+            image (_type_): _description_
+        """
         self.image = self.bridge.imgmsg_to_cv2(image, "bgr8")
         self.this_image_time_ms = int(image.header.stamp.nsecs / 1e6) + int(
             1000 * (image.header.stamp.secs - self.start_time)
